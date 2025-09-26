@@ -1,28 +1,84 @@
 #!/bin/bash
 
-GREEN="\033[1;32m"
-YELLOW="\033[1;33m"
-CYAN="\033[1;36m"
-RESET="\033[0m"
+# ─────────────────────────────────────────────
+# Config
+# ─────────────────────────────────────────────
 
 REPO_URL="https://github.com/seponik/dotfiles.git"
 DOTFILES_DIR="$HOME/.dotfiles"
 
-echo "╭───────────────────╮"
-echo "│┏━┓┏━╸┏━┓┏━┓┏┓╻╻╻┏ │"
-echo "│┗━┓┣╸ ┣━┛┃ ┃┃┗┫┃┣┻┓│"
-echo "│┗━┛┗━╸╹  ┗━┛╹ ╹╹╹ ╹│"
-echo "╰───────────────────╯"
+# ─────────────────────────────────────────────
+# Colors
+# ─────────────────────────────────────────────
 
-echo -e "${CYAN}[•] Starting dotfiles setup...${RESET}"
+SUCCESS="\033[1;32m"
+INFO="\033[1;36m"
+WARN="\033[1;33m"
+ERROR="\033[1;31m"
+LOGO="\033[1;37m"
+RESET="\033[0m"
 
-if [ -d "$DOTFILES_DIR" ]; then
-  echo -e "${YELLOW}[~] Updating existing dotfiles repo...${RESET}"
-  git -C "$DOTFILES_DIR" pull
-else
-  echo -e "${GREEN}[+] Downloading dotfiles...${RESET}"
-  git clone "$REPO_URL" "$DOTFILES_DIR"
-fi
+# ─────────────────────────────────────────────
+# Utility Functions
+# ─────────────────────────────────────────────
 
-ln -sf "$DOTFILES_DIR/vim/.vimrc" "$HOME/.vimrc"
-ln -sfn "$DOTFILES_DIR/vim/.vim" "$HOME/.vim"
+info()    { echo -e "${INFO}[+] $1${RESET}"; }
+warn()    { echo -e "${WARN}[~] $1${RESET}"; }
+success() { echo -e "${SUCCESS}[✓] $1${RESET}"; }
+error()   { echo -e "${ERROR}[✗] $1${RESET}"; exit 1; }
+
+logo() {
+  echo -e "${LOGO}╭───────────────────╮"
+  echo "│┏━┓┏━╸┏━┓┏━┓┏┓╻╻╻┏ │"
+  echo "│┗━┓┣╸ ┣━┛┃ ┃┃┗┫┃┣┻┓│"
+  echo "│┗━┛┗━╸╹  ┗━┛╹ ╹╹╹ ╹│"
+  echo -e "╰───────────────────╯${RESET}"
+}
+
+# ─────────────────────────────────────────────
+# Core Functions
+# ─────────────────────────────────────────────
+
+update_repo() {
+  warn "Updating existing dotfiles..."
+  git -C "$DOTFILES_DIR" pull --quiet > /dev/null 2>&1 || error "Failed to update dotfiles."
+}
+
+clone_repo() {
+  info "Downloading dotfiles..."
+  git clone --quiet "$REPO_URL" "$DOTFILES_DIR" > /dev/null 2>&1 || error "Failed to download dotfiles."
+}
+
+link_files() {
+  # ──────── VIM ────────
+  ln -sf "$DOTFILES_DIR/vim/.vimrc" "$HOME/.vimrc"
+  ln -sf "$DOTFILES_DIR/vim/.vim" "$HOME/.vim"
+
+  # ──────── ZSH ────────
+  # TODO
+
+  # ──────── VSCODE ────────
+  # TODO
+}
+
+main() {
+  logo
+
+  echo -e "${INFO}[•] Starting dotfiles setup...${RESET}"
+
+  if [ -d "$DOTFILES_DIR" ]; then
+    update_repo
+  else
+    clone_repo
+  fi
+
+  link_files
+
+  success "Dotfiles setup complete."
+}
+
+# ─────────────────────────────────────────────
+# Run
+# ─────────────────────────────────────────────
+
+main
