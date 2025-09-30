@@ -46,7 +46,7 @@ update_repo() {
 
 clone_repo() {
   info "Downloading dotfiles..."
-  git clone --quiet "$REPO_URL" "$DOTFILES_DIR" > /dev/null 2>&1 || error "Failed to download dotfiles."
+  git clone --quiet --depth=1 "$REPO_URL" "$DOTFILES_DIR" > /dev/null 2>&1 || error "Failed to download dotfiles."
 }
 
 link_files() {
@@ -55,7 +55,13 @@ link_files() {
   ln -sf "$DOTFILES_DIR/vim/.vim" "$HOME/.vim"
 
   # ──────── ZSH ────────
-  # TODO
+  ln -sf "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
+
+  mkdir -p "$DOTFILES_DIR/zsh/plugins"
+  
+  git clone --quiet --depth=1 "https://github.com/zsh-users/zsh-autosuggestions.git" "$DOTFILES_DIR/zsh/plugins/zsh-autosuggestions" > /dev/null 2>&1 || error "Failed to download zsh-autosuggestions."
+
+  git clone --quiet --depth=1 "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$DOTFILES_DIR/zsh/plugins/zsh-syntax-highlighting" > /dev/null 2>&1 || error "Failed to download zsh-syntax-highlighting."
 
   # ──────── VSCODE ────────
   # TODO
