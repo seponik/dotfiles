@@ -35,6 +35,15 @@ logo() {
   echo -e "╰───────────────────╯${RESET}"
 }
 
+clone_if_missing() {
+  local repo="$1"
+  local dest="$2"
+
+  if [ ! -d "$dest" ]; then
+    git clone --quiet --depth=1 "$repo" "$dest" > /dev/null 2>&1 || error "Failed to download ZSH plugins."
+  fi
+}
+
 # ─────────────────────────────────────────────
 # Core Functions
 # ─────────────────────────────────────────────
@@ -58,10 +67,10 @@ link_files() {
   ln -sf "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
 
   mkdir -p "$DOTFILES_DIR/zsh/plugins"
-  
-  git clone --quiet --depth=1 "https://github.com/zsh-users/zsh-autosuggestions.git" "$DOTFILES_DIR/zsh/plugins/zsh-autosuggestions" > /dev/null 2>&1 || error "Failed to download zsh-autosuggestions."
 
-  git clone --quiet --depth=1 "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$DOTFILES_DIR/zsh/plugins/zsh-syntax-highlighting" > /dev/null 2>&1 || error "Failed to download zsh-syntax-highlighting."
+  clone_if_missing "https://github.com/zsh-users/zsh-autosuggestions.git" "$DOTFILES_DIR/zsh/plugins/zsh-autosuggestions" 
+
+  clone_if_missing "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$DOTFILES_DIR/zsh/plugins/zsh-syntax-highlighting"
 
   # ──────── VSCODE ────────
   # TODO
