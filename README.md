@@ -14,7 +14,7 @@ Minimal, modern, and fully custom configuration files for a Unix-like developmen
 > ⚠️ Back up your existing config files before proceeding.
 
 ```bash
-curl -L https://github.com/username/dotfiles/raw/main/setup.sh | bash
+curl -L https://github.com/seponik/dotfiles/raw/main/setup.sh | bash
 ```
 
 Than:
